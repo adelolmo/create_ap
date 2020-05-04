@@ -1,0 +1,9 @@
+#!/bin/sh -e
+
+case "$1" in
+    configure|reconfigure)
+        systemctl daemon-reload
+		systemctl start create_ap
+		systemctl enable create_ap
+    ;;
+esac

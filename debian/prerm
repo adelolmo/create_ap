@@ -1,0 +1,13 @@
+#!/bin/sh -e
+
+case "$1" in
+    upgrade)
+        systemctl stop create_ap
+    ;;
+    remove)
+		systemctl stop create_ap
+		systemctl disable create_ap
+    ;;
+esac
+
+exit 0
