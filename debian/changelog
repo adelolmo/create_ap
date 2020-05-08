@@ -1,3 +1,10 @@
+create-ap (0.4.6~ado2) unstable; urgency=medium
+
+  * add dependencies to control
+  * re/start service after install
+
+ -- Andoni del Olmo <andoni.delolmo@gmail.com>  Fri, 08 May 2020 08:04:01 +0200
+
 create-ap (0.4.6~ado1) unstable; urgency=medium
 
   [ oblique ]
