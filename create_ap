@@ -652,7 +652,7 @@ REDIRECT_TO_LOCALHOST=0
 CONFIG_OPTS=(CHANNEL GATEWAY WPA_VERSION ETC_HOSTS DHCP_DNS NO_DNS NO_DNSMASQ HIDDEN MAC_FILTER MAC_FILTER_ACCEPT ISOLATE_CLIENTS
              SHARE_METHOD IEEE80211N IEEE80211AC HT_CAPAB VHT_CAPAB DRIVER NO_VIRT COUNTRY FREQ_BAND
              NEW_MACADDR DAEMONIZE DAEMON_PIDFILE DAEMON_LOGFILE NO_HAVEGED WIFI_IFACE INTERNET_IFACE
-             SSID PASSPHRASE USE_PSK)
+             SSID PASSPHRASE USE_PSK WIFI_FT_KEY NAS_IDENTIFIER)
 
 FIX_UNMANAGED=0
 LIST_RUNNING=0
@@ -1692,23 +1692,29 @@ if [[ -n "$PASSPHRASE" ]]; then
 wpa=${WPA_VERSION}
 eapol_version=2
 wpa_${WPA_KEY_TYPE}=${PASSPHRASE}
-wpa_key_mgmt=WPA-PSK FT-PSK
-wpa_pairwise=CCMP
-
-nas_identifier=dca6324dc9e3
-mobility_domain=1e35
-r0_key_lifetime=10000
-rkh_pos_timeout=10000
-reassociation_deadline=3000
-pmk_r1_push=1
-ft_over_ds=0
-
 wpa_group_rekey=3600
 wpa_group_update_count=4
 wpa_gmk_rekey=86400
 
-r0kh=ff:ff:ff:ff:ff:ff * 9c460edaa403440d638b46bfff0eefbe
-r1kh=00:00:00:00:00:00 00:00:00:00:00:00 9c460edaa403440d638b46bfff0eefbe
+##[WPA2-PSK+FT/PSK-CCMP][ESS]
+wpa_key_mgmt=WPA-PSK FT-PSK
+wpa_pairwise=CCMP
+#rsn_pairwise=CCMP
+
+
+##[WPA2-PSK-CCMP][ESS]
+#wpa_key_mgmt=WPA-PSK FT-PSK
+#wpa_pairwise=CCMP
+
+
+##[WPA-PSK-CCMP+TKIP][ESS]
+#wpa_key_mgmt=WPA-PSK FT-PSK
+#wpa_pairwise=TKIP CCMP
+#rsn_pairwise=CCMP
+
+wpa_group_rekey=3600
+wpa_group_update_count=4
+wpa_gmk_rekey=86400
 
 #wlan_id=1e35
 #iapp_key=9c460edaa403440d638b46bfff0eefbe
@@ -1716,6 +1722,24 @@ r1kh=00:00:00:00:00:00 00:00:00:00:00:00 9c460edaa403440d638b46bfff0eefbe
 own_ip_addr=192.168.178.22
 logger_syslog=-1
 logger_syslog_level=0
+
+##### RADIUS client configuration #############################################
+nas_identifier=dca6324cc9e4
+
+##### IEEE 802.11r configuration ##############################################
+mobility_domain=1e35
+r0_key_lifetime=10000
+#ft_r0_key_lifetime=10000
+#r1_key_holder=dca6324cc9e4
+reassociation_deadline=3000
+r0kh=ff:ff:ff:ff:ff:ff * ${WIFI_FT_KEY}
+#r0kh=dc:a6:32:4c:c9:e4 ${NAS_IDENTIFIER} ${WIFI_FT_KEY}
+r1kh=00:00:00:00:00:00 00:00:00:00:00:00 ${WIFI_FT_KEY}
+#r1kh=dc:a6:32:4c:c9:e4 dc:a6:32:4c:c9:e4 ${WIFI_FT_KEY}
+rkh_pos_timeout=10000
+pmk_r1_push=1
+ft_over_ds=0
+ft_psk_generate_local=0
 EOF
 fi
 
