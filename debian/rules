@@ -1,15 +1,21 @@
 #!/usr/bin/make -f
 
 export DH_OPTIONS
+DEB_BUILD=debian/createap
 
 %:
 	dh $@
 
 clean:
-	rm -f debian/*.debhelper.log
 	dh_clean
+	rm -f debian/*.debhelper.log
 
 override_dh_auto_install:
 	dh_auto_install
-	rm -rf debian/create-ap/usr/lib
-	install -Dm644 create_ap.service debian/create-ap/lib/systemd/system/create_ap.service
+	rm -rf ${DEB_BUILD}/usr/lib
+	install -Dm644 create_ap.service ${DEB_BUILD}/lib/systemd/system/createap.service
+	sed -i 's/create_ap/createap/g' ${DEB_BUILD}/lib/systemd/system/createap.service
+	mv ${DEB_BUILD}/usr/bin/create_ap ${DEB_BUILD}/usr/bin/createap
+	mv ${DEB_BUILD}/etc/create_ap.conf ${DEB_BUILD}/etc/createap.conf
+	mv ${DEB_BUILD}/usr/share/bash-completion/completions/create_ap ${DEB_BUILD}/usr/share/bash-completion/completions/createap
+	mv ${DEB_BUILD}/usr/share/doc/create_ap ${DEB_BUILD}/usr/share/doc/createap

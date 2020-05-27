@@ -1,4 +1,4 @@
-Source: create-ap
+Source: createap
 Section: admin
 Priority: optional
 Maintainer: Andoni del Olmo <andoni.delolmo@gmail.com>
@@ -6,7 +6,7 @@ Build-Depends: debhelper (>=9)
 Standards-Version: 3.9.4
 Homepage: https://github.com/adelolmo/create_ap
 
-Package: create-ap
+Package: createap
 Depends: util-linux, procps, hostapd, iproute2, iw, dnsmasq, iptables
 Architecture: any
 Description: Create a NATed or Bridged WiFi Access Point.

@@ -1,9 +1,0 @@
-#!/bin/sh -e
-
-case "$1" in
-	remove)
-		systemctl daemon-reload
-	;;
-esac
-
-exit 0

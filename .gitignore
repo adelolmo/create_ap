@@ -1,6 +1,6 @@
 .idea
-debian/create-ap.debhelper.log
-debian/create-ap.substvars
+debian/createap.debhelper.log
+debian/createap.substvars
 debian/.debhelper
-debian/create-ap
+debian/createap
 debian/files

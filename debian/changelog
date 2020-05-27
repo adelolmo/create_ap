@@ -1,11 +1,18 @@
-create-ap (0.4.6~ado2) unstable; urgency=medium
+createap (0.4.6~ado3) unstable; urgency=medium
+
+  [ Andoni ]
+  * rename package, service and config to "createap"
+
+ -- Andoni del Olmo <andoni.delolmo@gmail.com>  Wed, 27 May 2020 15:38:41 +0200
+
+createap (0.4.6~ado2) unstable; urgency=medium
 
   * add dependencies to control
   * re/start service after install
 
  -- Andoni del Olmo <andoni.delolmo@gmail.com>  Fri, 08 May 2020 08:04:01 +0200
 
-create-ap (0.4.6~ado1) unstable; urgency=medium
+createap (0.4.6~ado1) unstable; urgency=medium
 
   [ oblique ]
   * Forgot to delete new NATing rule
