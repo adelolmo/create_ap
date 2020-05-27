@@ -32,6 +32,15 @@
     cd create_ap
     make install
 
+### Debian
+    git clone https://github.com/oblique/create_ap
+    cd create_ap
+
+You can build the package for a specific architecture. Possible values are `armhf`, `arm64`, `amd64` and `i386`. 
+
+    dpkg-buildpackage -a armhf -us -uc -b
+    dpkg -i createap_0.4.6~ado3_armhf.deb
+
 ### ArchLinux
     pacman -S create_ap
 
