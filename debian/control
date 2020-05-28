@@ -1,5 +1,5 @@
 Source: createap
-Section: admin
+Section: net
 Priority: optional
 Maintainer: Andoni del Olmo <andoni.delolmo@gmail.com>
 Build-Depends: debhelper (>=9)
