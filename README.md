@@ -8,7 +8,7 @@
 * Choose the AP Gateway IP (only for 'NATed' and 'None' Internet sharing methods).
 * You can create an AP with the same interface you are getting your Internet connection.
 * You can pass your SSID and password through pipe or through arguments (see examples).
-
+* Support for IEEE 802.11r configuration (Fast BSS Transition).
 
 ## Dependencies
 ### General
@@ -27,13 +27,8 @@
 
 
 ## Installation
-### Generic
-    git clone https://github.com/oblique/create_ap
-    cd create_ap
-    make install
 
-### Debian
-    git clone https://github.com/oblique/create_ap
+    git clone https://github.com/adelolmo/create_ap
     cd create_ap
 
 You can build the package for a specific architecture. Possible values are `armhf`, `arm64`, `amd64` and `i386`. 
@@ -41,56 +36,58 @@ You can build the package for a specific architecture. Possible values are `armh
     dpkg-buildpackage -a armhf -us -uc -b
     dpkg -i createap_0.4.6~ado3_armhf.deb
 
-### ArchLinux
-    pacman -S create_ap
+## Systemd service
+### Start service immediately:
+    systemctl start createap
 
-### Gentoo
-    emerge layman
-    layman -f -a jorgicio
-    emerge net-wireless/create_ap
+### Start on boot:
+    systemctl enable createap
+
 
 ## Examples
 ### No passphrase (open network):
-    create_ap wlan0 eth0 MyAccessPoint
+    createap wlan0 eth0 MyAccessPoint
 
 ### WPA + WPA2 passphrase:
-    create_ap wlan0 eth0 MyAccessPoint MyPassPhrase
+    createap wlan0 eth0 MyAccessPoint MyPassPhrase
 
 ### AP without Internet sharing:
-    create_ap -n wlan0 MyAccessPoint MyPassPhrase
+    createap -n wlan0 MyAccessPoint MyPassPhrase
 
 ### Bridged Internet sharing:
-    create_ap -m bridge wlan0 eth0 MyAccessPoint MyPassPhrase
+    createap -m bridge wlan0 eth0 MyAccessPoint MyPassPhrase
 
 ### Bridged Internet sharing (pre-configured bridge interface):
-    create_ap -m bridge wlan0 br0 MyAccessPoint MyPassPhrase
+    createap -m bridge wlan0 br0 MyAccessPoint MyPassPhrase
 
 ### Internet sharing from the same WiFi interface:
-    create_ap wlan0 wlan0 MyAccessPoint MyPassPhrase
+    createap wlan0 wlan0 MyAccessPoint MyPassPhrase
 
 ### Choose a different WiFi adapter driver
-    create_ap --driver rtl871xdrv wlan0 eth0 MyAccessPoint MyPassPhrase
+    createap --driver rtl871xdrv wlan0 eth0 MyAccessPoint MyPassPhrase
 
 ### No passphrase (open network) using pipe:
-    echo -e "MyAccessPoint" | create_ap wlan0 eth0
+    echo -e "MyAccessPoint" | createap wlan0 eth0
 
 ### WPA + WPA2 passphrase using pipe:
-    echo -e "MyAccessPoint\nMyPassPhrase" | create_ap wlan0 eth0
+    echo -e "MyAccessPoint\nMyPassPhrase" | createap wlan0 eth0
 
 ### Enable IEEE 802.11n
-    create_ap --ieee80211n --ht_capab '[HT40+]' wlan0 eth0 MyAccessPoint MyPassPhrase
+    createap --ieee80211n --ht_capab '[HT40+]' wlan0 eth0 MyAccessPoint MyPassPhrase
 
 ### Client Isolation:
-    create_ap --isolate-clients wlan0 eth0 MyAccessPoint MyPassPhrase
+    createap --isolate-clients wlan0 eth0 MyAccessPoint MyPassPhrase
 
-## Systemd service
-Using the persistent [systemd](https://wiki.archlinux.org/index.php/systemd#Basic_systemctl_usage) service
-### Start service immediately:
-    systemctl start create_ap
+### Enable IEEE 802.11r
 
-### Start on boot:
-    systemctl enable create_ap
+This feature can only be enabled via the configuration file `createap.conf`.
 
+| Name | Type | Default | Description |
+|:---|:---|:---|:---|
+| FT | 0-1 | 0 | *(required)* Disable/Enable IEEE 802.11r. Default is 0 |
+| WIFI_FT_KEY | 256-bit hex string | |*(required)* Key used during the Initial Mobility Domain Association|
+| NAS_IDENTIFIER | 1 to 48 octets string | | *(optional)* NAS-Identifier string for RADIUS messages. When used, this should be unique to the NAS within the scope of the RADIUS server.|
+| MOBILITY_DOMAIN | 2-octet hex string | | *(required)* Mobility Domain identifier. MDID is used to indicate a group of APs (within an ESS, i.e., sharing the same SSID) between which a STA can use Fast BSS Transition.|     
 
 ## License
 FreeBSD
