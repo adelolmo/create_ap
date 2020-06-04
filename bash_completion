@@ -70,6 +70,18 @@ _create_ap() {
         --ieee80211n)
             # No Options
             ;;
+        --ieee80211r)
+            # No Options
+            ;;
+        --nas_identifier)
+            # No Options
+            ;;
+        --mobility_domain)
+            # No Options
+            ;;
+        --wifi_ft_key)
+            # No Options
+            ;;
         --ht_capab)
             # Refer http://w1.fi/cgit/hostap/plain/hostapd/hostapd.conf
             opts='
