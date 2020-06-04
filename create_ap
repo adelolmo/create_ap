@@ -49,6 +49,10 @@ usage() {
     echo "  --isolate-clients       Disable communication between clients"
     echo "  --ieee80211n            Enable IEEE 802.11n (HT)"
     echo "  --ieee80211ac           Enable IEEE 802.11ac (VHT)"
+    echo "  --ieee80211r            Enable IEEE 802.11r"
+    echo "  --mobility_domain       Indicates a group of APs between which a client can use Fast BSS Transition."
+    echo "  --wifi_ft_key           Key used during the Initial Mobility Domain Association."
+    echo "  --nas_identifier        NAS-Identifier string for RADIUS messages."
     echo "  --ht_capab <HT>         HT capabilities (default: [HT40+])"
     echo "  --vht_capab <VHT>       VHT capabilities"
     echo "  --country <code>        Set two-letter country code for regularity (example: US)"
@@ -645,7 +649,7 @@ DAEMON_PIDFILE=
 DAEMON_LOGFILE=/dev/null
 NO_HAVEGED=0
 USE_PSK=0
-FT=0
+IEEE80211R=0
 
 HOSTAPD_DEBUG_ARGS=
 REDIRECT_TO_LOCALHOST=0
@@ -653,7 +657,7 @@ REDIRECT_TO_LOCALHOST=0
 CONFIG_OPTS=(CHANNEL GATEWAY WPA_VERSION ETC_HOSTS DHCP_DNS NO_DNS NO_DNSMASQ HIDDEN MAC_FILTER MAC_FILTER_ACCEPT ISOLATE_CLIENTS
              SHARE_METHOD IEEE80211N IEEE80211AC HT_CAPAB VHT_CAPAB DRIVER NO_VIRT COUNTRY FREQ_BAND
              NEW_MACADDR DAEMONIZE DAEMON_PIDFILE DAEMON_LOGFILE NO_HAVEGED WIFI_IFACE INTERNET_IFACE
-             SSID PASSPHRASE USE_PSK FT WIFI_FT_KEY NAS_IDENTIFIER MOBILITY_DOMAIN)
+             SSID PASSPHRASE USE_PSK IEEE80211R WIFI_FT_KEY NAS_IDENTIFIER MOBILITY_DOMAIN)
 
 FIX_UNMANAGED=0
 LIST_RUNNING=0
@@ -1048,7 +1052,7 @@ for ((i=0; i<$#; i++)); do
     fi
 done
 
-GETOPT_ARGS=$(getopt -o hc:w:g:de:nm: -l "help","hidden","hostapd-debug:","redirect-to-localhost","mac-filter","mac-filter-accept:","isolate-clients","ieee80211n","ieee80211ac","ht_capab:","vht_capab:","driver:","no-virt","fix-unmanaged","country:","freq-band:","mac:","dhcp-dns:","daemon","pidfile:","logfile:","stop:","list","list-running","list-clients:","version","psk","no-haveged","no-dns","no-dnsmasq","mkconfig:","config:" -n "$PROGNAME" -- "$@")
+GETOPT_ARGS=$(getopt -o hc:w:g:de:nm: -l "help","hidden","hostapd-debug:","redirect-to-localhost","mac-filter","mac-filter-accept:","isolate-clients","ieee80211n","ieee80211ac","ieee80211r","nas_identifier:","wifi_ft_key:","mobility_domain:","ht_capab:","vht_capab:","driver:","no-virt","fix-unmanaged","country:","freq-band:","mac:","dhcp-dns:","daemon","pidfile:","logfile:","stop:","list","list-running","list-clients:","version","psk","no-haveged","no-dns","no-dnsmasq","mkconfig:","config:" -n "$PROGNAME" -- "$@")
 [[ $? -ne 0 ]] && exit 1
 eval set -- "$GETOPT_ARGS"
 
@@ -1120,6 +1124,25 @@ while :; do
         --ieee80211ac)
             shift
             IEEE80211AC=1
+            ;;
+        --ieee80211r)
+            shift
+            IEEE80211R=1
+            ;;
+        --nas_identifier)
+            shift
+            NAS_IDENTIFIER="$1"
+            shift
+            ;;
+        --mobility_domain)
+            shift
+            MOBILITY_DOMAIN="$1"
+            shift
+            ;;
+        --wifi_ft_key)
+            shift
+            WIFI_FT_KEY="$1"
+            shift
             ;;
         --ht_capab)
             shift
@@ -1513,6 +1536,17 @@ if [[ $NO_VIRT -eq 1 && "$WIFI_IFACE" == "$INTERNET_IFACE" ]]; then
     exit 1
 fi
 
+if [[ $IEEE80211R -eq 1 ]]; then
+    if [[ ${#WIFI_FT_KEY} -lt 1 || ${#WIFI_FT_KEY} -gt 32 ]]; then
+        echo "ERROR: Invalid WIFI_FT_KEY length ${#WIFI_FT_KEY} (expected 1..32)" >&2
+        exit 1
+    fi
+    if [[ ${#MOBILITY_DOMAIN} -lt 1 || ${#MOBILITY_DOMAIN} -gt 4 ]]; then
+        echo "ERROR: Invalid MOBILITY_DOMAIN length ${#MOBILITY_DOMAIN} (expected 1..4)" >&2
+        exit 1
+    fi
+fi
+
 mutex_lock
 trap "cleanup" EXIT
 CONFDIR=$(mktemp -d /tmp/create_ap.${WIFI_IFACE}.conf.XXXXXXXX)
@@ -1697,7 +1731,7 @@ logger_syslog_level=0
 EOF
 fi
 
-if [[ $FT -eq 0 ]]; then
+if [[ $IEEE80211R -eq 0 ]]; then
     cat << EOF >> $CONFDIR/hostapd.conf
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP CCMP

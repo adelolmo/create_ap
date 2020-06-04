@@ -79,15 +79,22 @@ You can build the package for a specific architecture. Possible values are `armh
     createap --isolate-clients wlan0 eth0 MyAccessPoint MyPassPhrase
 
 ### Enable IEEE 802.11r
+Note that `WIFI_FT_KEY` and `MOBILITY_DOMAIN` values **have to match** the values from the other Access Points in the network.
 
-This feature can only be enabled via the configuration file `createap.conf`.
+You most probably need to use a `bridge` connection so that the client's IP doesn't change.
+
+Enable the feature via cli:
+
+    createap -m bridge --ieee80211r --mobility_domain 2e32 --wifi_ft_key 638b46bfff0eefbe0c460edaa403440d wlan0 eth0 MyAccessPoint MyPassPhrase
+
+Enable the feature via the configuration file `/etc/createap.conf`.
 
 | Name | Type | Default | Description |
 |:---|:---|:---|:---|
-| FT | 0-1 | 0 | *(required)* Disable/Enable IEEE 802.11r. Default is 0 |
-| WIFI_FT_KEY | 256-bit hex string | |*(required)* Key used during the Initial Mobility Domain Association|
+| IEEE80211R | 0-1 | 0 | *(required)* Disable/Enable IEEE 802.11r. Default is 0.|
+| WIFI_FT_KEY | 256-bit hex string | | *(required)* Key used during the Initial Mobility Domain Association.|
 | NAS_IDENTIFIER | 1 to 48 octets string | | *(optional)* NAS-Identifier string for RADIUS messages. When used, this should be unique to the NAS within the scope of the RADIUS server.|
-| MOBILITY_DOMAIN | 2-octet hex string | | *(required)* Mobility Domain identifier. MDID is used to indicate a group of APs (within an ESS, i.e., sharing the same SSID) between which a STA can use Fast BSS Transition.|     
+| MOBILITY_DOMAIN | 2-octet hex string | | *(required)* Mobility Domain identifier is used to indicate a group of APs (within an ESS, i.e., sharing the same SSID) between which a client can use Fast BSS Transition.|
 
 ## License
 FreeBSD
