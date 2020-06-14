@@ -34,7 +34,7 @@
 You can build the package for a specific architecture.
 
     dpkg-buildpackage -us -uc -b
-    dpkg -i createap_0.4.6~ado3_all.deb
+    dpkg -i createap_0.4.6.ado4_all.deb
 
 ## Systemd service
 ### Start service immediately:
