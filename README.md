@@ -31,10 +31,10 @@
     git clone https://github.com/adelolmo/create_ap
     cd create_ap
 
-You can build the package for a specific architecture. Possible values are `armhf`, `arm64`, `amd64` and `i386`. 
+You can build the package for a specific architecture.
 
-    dpkg-buildpackage -a armhf -us -uc -b
-    dpkg -i createap_0.4.6~ado3_armhf.deb
+    dpkg-buildpackage -us -uc -b
+    dpkg -i createap_0.4.6~ado3_all.deb
 
 ## Systemd service
 ### Start service immediately:
